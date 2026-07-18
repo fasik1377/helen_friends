@@ -13,12 +13,16 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  Gem,
+  Heart,
   MapPin,
   MessageCircle,
   Phone,
   Send,
   Sparkles,
   Star,
+  Users,
+  WandSparkles,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -91,33 +95,90 @@ const heroImages = [
 
 const productAds = [
   {
-    name: "Silk Finish",
-    type: "Shine serum",
-    price: "$24",
-    accent: "#c2b280",
-    bottle: "rounded-t-[42%]",
+    name: "Human Hair",
+    type: "Premium extensions",
+    price: "From $140",
+    image: "/images/hair8.jpg",
+    alt: "Long premium human hair extensions with soft curls",
   },
   {
-    name: "Crown Care",
-    type: "Hydration mask",
-    price: "$32",
-    accent: "#8f6b59",
-    bottle: "rounded-t-lg",
+    name: "Curl Revival",
+    type: "Hydration & styling",
+    price: "From $95",
+    image: "/images/hair14.jpg",
+    alt: "Healthy hydrated curls after professional styling",
   },
   {
-    name: "Smooth Hold",
-    type: "Edge control",
-    price: "$18",
-    accent: "#d8cda9",
-    bottle: "rounded-full",
+    name: "Silk Press",
+    type: "Smooth, glossy finish",
+    price: "From $85",
+    image: "/images/hair12.jpg",
+    alt: "Smooth glossy hair after a professional silk press",
+  },
+];
+
+const packages = [
+  {
+    icon: Heart,
+    eyebrow: "For the bride",
+    title: "The Bridal Signature",
+    price: "From $425",
+    description: "A calm, polished beauty experience created around your wedding day.",
+    features: ["Bridal hair trial", "Wedding-day styling", "Travel to the bride’s home or venue", "Veil and accessory placement"],
+    image: "/images/hair7.jpg",
+    featured: true,
+  },
+  {
+    icon: Users,
+    eyebrow: "For your people",
+    title: "Bridal Party",
+    price: "Custom quote",
+    description: "A coordinated styling plan that gets your favorite people ready together.",
+    features: ["Styling for 3+ guests", "On-location service available", "Personalized looks", "Wedding-morning timeline"],
+    image: "/images/hair4.jpg",
+  },
+  {
+    icon: Gem,
+    eyebrow: "For every moment",
+    title: "The Celebration",
+    price: "From $175",
+    description: "Camera-ready hair for engagements, graduations, birthdays and formal events.",
+    features: ["Style consultation", "Long-wear occasion style", "Extension placement", "Finishing touch-up kit"],
+    image: "/images/hair3.jpg",
   },
 ];
 
 function ProductAdRail() {
   const repeatingProducts = [...productAds, ...productAds];
 
+  const adCard = (product: (typeof productAds)[number], index: number, mobile = false) => (
+    <motion.article
+      key={`${mobile ? "mobile" : "desktop"}-${product.name}-${index}`}
+      whileHover={{ rotateY: -6, scale: 1.025 }}
+      className={`group relative shrink-0 overflow-hidden border border-white/25 bg-[#2b1d17] text-white shadow-[0_18px_45px_rgba(43,29,23,0.34)] ${mobile ? "h-24 w-[72vw] max-w-[280px] p-3" : "h-40 p-3"}`}
+      style={{ transformPerspective: 800, rotateY: index % 2 ? -3 : 3 }}
+    >
+      <Image src={product.image} alt={product.alt} fill sizes={mobile ? "280px" : "29vw"} className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#211610]/95 via-[#2b1d17]/70 to-transparent" />
+      <div className="relative flex h-full items-center">
+        <div className="max-w-[72%] min-w-0">
+          <p className="text-[0.48rem] font-bold uppercase tracking-[0.16em] text-[#d8c994]">Featured service</p>
+          <h3 className={`display-font mt-1.5 leading-none ${mobile ? "text-lg" : "text-xl"}`}>{product.name}</h3>
+          <p className="mt-1.5 text-[0.6rem] text-white/65">{product.type}</p>
+          <p className="mt-1.5 text-[0.68rem] font-bold">{product.price}</p>
+        </div>
+      </div>
+    </motion.article>
+  );
+
   return (
-    <div className="absolute bottom-[6%] right-0 top-[6%] z-20 hidden w-[29%] overflow-hidden sm:block">
+    <>
+      <div className="absolute bottom-3 left-3 right-3 z-30 overflow-hidden sm:hidden">
+        <motion.div animate={{ x: ["0%", "-100%"] }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }} className="flex w-max gap-3 py-2">
+          {repeatingProducts.map((product, index) => adCard(product, index, true))}
+        </motion.div>
+      </div>
+      <div className="absolute bottom-[6%] right-0 top-[6%] z-20 hidden w-[29%] overflow-hidden sm:block">
       <div
         className="h-full overflow-hidden"
         style={{
@@ -132,49 +193,7 @@ function ProductAdRail() {
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
           className="grid gap-3 py-5"
         >
-          {repeatingProducts.map((product, index) => (
-            <motion.article
-              key={`${product.name}-${index}`}
-              whileHover={{ rotateY: -8, x: -8, scale: 1.03 }}
-              className="relative h-40 overflow-hidden border border-white/25 bg-[#2b1d17] p-3 text-white shadow-[0_18px_45px_rgba(43,29,23,0.34)]"
-              style={{
-                transformPerspective: 800,
-                rotateY: index % 2 ? -5 : 5,
-              }}
-            >
-              <div
-                className="absolute inset-0 opacity-20"
-                style={{
-                  background: `linear-gradient(135deg, ${product.accent}, transparent 62%)`,
-                }}
-              />
-              <div className="relative flex h-full items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-[0.5rem] font-bold uppercase tracking-[0.16em] text-[#c2b280]">
-                    Salon pick
-                  </p>
-                  <h3 className="display-font mt-2 text-xl leading-none">
-                    {product.name}
-                  </h3>
-                  <p className="mt-2 text-[0.62rem] text-white/55">{product.type}</p>
-                  <p className="mt-3 text-xs font-bold">{product.price}</p>
-                </div>
-                <div className="relative h-[108px] w-[46px] shrink-0">
-                  <div className="absolute left-1/2 top-0 h-4 w-5 -translate-x-1/2 bg-[#d9ceb0]" />
-                  <div
-                    className={`absolute inset-x-0 bottom-0 top-3 border border-white/30 ${product.bottle}`}
-                    style={{
-                      background: `linear-gradient(145deg, ${product.accent}, #5c4033)`,
-                    }}
-                  >
-                    <div className="absolute left-1/2 top-[44%] w-[82%] -translate-x-1/2 bg-[#fbf8f1] px-1 py-2 text-center text-[0.42rem] font-black uppercase tracking-[0.08em] text-[#5c4033]">
-                      H.F.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+          {repeatingProducts.map((product, index) => adCard(product, index))}
         </motion.div>
       </div>
       <div className="pointer-events-none absolute right-2 top-1/2 z-30 -translate-y-1/2 [writing-mode:vertical-rl]">
@@ -182,7 +201,8 @@ function ProductAdRail() {
           Beauty essentials
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -522,6 +542,73 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="packages" className="relative overflow-hidden bg-[#eadfca] py-24 sm:py-32">
+        <motion.div
+          aria-hidden="true"
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
+          className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full border border-[#5c4033]/15"
+        >
+          <div className="absolute inset-12 rounded-full border border-[#5c4033]/10" />
+          <Sparkles className="absolute left-7 top-1/2 text-[#5c4033]/30" />
+        </motion.div>
+        <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="eyebrow">More than an appointment</p>
+            <h2 className="display-font mt-4 text-5xl leading-[0.98] text-[#2b1d17] sm:text-7xl">
+              Packages for your <span className="italic text-[#5c4033]">big moments.</span>
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#67584f]">
+              Thoughtful, unhurried styling—from your trial to the final pin. We can come to your home or venue so your day begins beautifully.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-6 lg:grid-cols-3 [perspective:1400px]">
+            {packages.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.article
+                  key={item.title}
+                  initial={{ opacity: 0, y: 55, rotateX: 12, rotateY: index === 0 ? -8 : index === 2 ? 8 : 0 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.8, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -12, rotateX: 2, rotateY: index === 1 ? 0 : index === 0 ? 2 : -2 }}
+                  className={`group relative min-h-[590px] overflow-hidden shadow-[0_28px_70px_rgba(43,29,23,0.16)] [transform-style:preserve-3d] ${item.featured ? "bg-[#2b1d17] text-white lg:-translate-y-5" : "bg-[#fbf8f1] text-[#2b1d17]"}`}
+                >
+                  <div className="relative h-56 overflow-hidden">
+                    <Image src={item.image} alt={`${item.title} hairstyle`} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover object-top transition duration-700 group-hover:scale-110" />
+                    <div className={`absolute inset-0 bg-gradient-to-t ${item.featured ? "from-[#2b1d17]" : "from-[#fbf8f1]"} via-transparent to-transparent`} />
+                    <motion.div animate={{ y: [0, -7, 0], rotate: [0, 4, 0] }} transition={{ duration: 5 + index, repeat: Infinity, ease: "easeInOut" }} className="absolute right-5 top-5 grid h-14 w-14 place-items-center rounded-full border border-white/35 bg-[#5c4033]/85 text-white shadow-xl backdrop-blur-md">
+                      <Icon size={22} />
+                    </motion.div>
+                  </div>
+                  <div className="relative -mt-3 p-7 pt-0 sm:p-8 sm:pt-0">
+                    <p className={`text-[0.65rem] font-black uppercase tracking-[0.18em] ${item.featured ? "text-[#d8c994]" : "text-[#8a715e]"}`}>{item.eyebrow}</p>
+                    <h3 className="display-font mt-3 text-4xl leading-none">{item.title}</h3>
+                    <p className={`mt-4 text-sm leading-6 ${item.featured ? "text-white/65" : "text-[#6d6058]"}`}>{item.description}</p>
+                    <ul className="mt-6 space-y-3">
+                      {item.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-3 text-sm">
+                          <WandSparkles size={15} className={`mt-0.5 shrink-0 ${item.featured ? "text-[#d8c994]" : "text-[#5c4033]"}`} />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className={`mt-7 flex items-center justify-between border-t pt-5 ${item.featured ? "border-white/15" : "border-[#5c4033]/15"}`}>
+                      <span className="font-bold">{item.price}</span>
+                      <Link href="/book" className={`grid h-11 w-11 place-items-center rounded-full transition group-hover:translate-x-1 ${item.featured ? "bg-[#c2b280] text-[#2b1d17]" : "bg-[#5c4033] text-white"}`} aria-label={`Book ${item.title}`}>
+                        <ArrowRight size={18} />
+                      </Link>
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <section id="gallery" className="bg-[#2b1d17] py-24 text-white sm:py-32">
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -535,24 +622,56 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mt-12 grid auto-rows-[260px] grid-cols-1 gap-3 sm:grid-cols-2 md:auto-rows-[310px] md:grid-cols-4">
+          <div className="relative mt-16 grid auto-rows-[280px] grid-cols-1 gap-5 [perspective:1800px] sm:grid-cols-2 md:auto-rows-[320px] md:grid-cols-4">
+            <div aria-hidden="true" className="pointer-events-none absolute -inset-8 bg-[radial-gradient(circle_at_center,rgba(194,178,128,0.13),transparent_62%)]" />
             {gallery.map((image, index) => (
               <motion.figure
                 key={image.src}
-                initial={{ opacity: 0, rotateY: index % 2 ? 8 : -8, y: 25 }}
-                whileInView={{ opacity: 1, rotateY: 0, y: 0 }}
+                initial={{
+                  opacity: 0,
+                  rotateY: index % 2 ? 24 : -24,
+                  rotateX: index % 3 ? 8 : -8,
+                  y: 65,
+                  z: -120,
+                }}
+                whileInView={{ opacity: 1, rotateY: 0, rotateX: 0, y: 0, z: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.65, delay: (index % 4) * 0.07 }}
-                whileHover={{ scale: 0.985, rotateY: index % 2 ? -2 : 2 }}
-                className={`photo-depth relative overflow-hidden bg-[#3b2a22] ${image.className}`}
+                transition={{ duration: 0.9, delay: (index % 4) * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{
+                  scale: 1.025,
+                  rotateY: index % 2 ? -5 : 5,
+                  rotateX: -3,
+                  z: 55,
+                }}
+                className={`photo-depth group relative overflow-visible bg-[#3b2a22] shadow-[0_28px_60px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] ${image.className}`}
               >
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-top transition duration-700 hover:scale-105"
-                />
+                <div className="absolute inset-0 overflow-hidden [transform:translateZ(1px)]">
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover object-top transition duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1b100b]/85 via-transparent to-transparent opacity-70 transition duration-500 group-hover:opacity-95" />
+                  <motion.div
+                    aria-hidden="true"
+                    animate={{ x: ["-130%", "160%"] }}
+                    transition={{ duration: 5.5, delay: index * 0.35, repeat: Infinity, repeatDelay: 4 }}
+                    className="absolute inset-y-0 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/14 to-transparent"
+                  />
+                </div>
+                <div className="absolute bottom-5 left-5 right-5 z-10 flex translate-y-3 items-end justify-between gap-4 opacity-0 transition duration-500 [transform:translateZ(45px)] group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-6 sm:left-6 sm:right-6">
+                  <figcaption className="max-w-[75%] text-sm font-medium leading-5 text-white">{image.alt}</figcaption>
+                  <ArrowRight size={18} className="shrink-0 text-[#d8c994]" />
+                </div>
+                <motion.div
+                  animate={{ y: [0, -7, 0], rotateZ: [0, index % 2 ? 3 : -3, 0] }}
+                  transition={{ duration: 4.5 + (index % 3), repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -right-2 -top-3 z-20 grid h-11 w-11 place-items-center border border-white/25 bg-[#c2b280] text-[#2b1d17] shadow-xl [transform:translateZ(65px)]"
+                >
+                  <span className="display-font text-sm italic">{String(index + 1).padStart(2, "0")}</span>
+                </motion.div>
               </motion.figure>
             ))}
           </div>
