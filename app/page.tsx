@@ -1,601 +1,374 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import {
   ArrowRight,
-  CalendarCheck,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  HeartHandshake,
-  Mail,
+  CalendarDays,
+  Check,
   MapPin,
   MessageCircle,
   Phone,
-  Scissors,
   Send,
   Sparkles,
   Star,
   X,
 } from "lucide-react";
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
 
-const products = [
+const services = [
   {
-    name: "Brazilian Human Hair",
+    number: "01",
+    title: "Silk Press & Styling",
+    description:
+      "A smooth, weightless finish with movement, body and healthy shine.",
     price: "From $85",
-    image:
-      "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=1200&auto=format&fit=crop",
-    note: "Soft bundles, natural shine, salon matched.",
+    image: "/images/hair1.jpg",
   },
   {
-    name: "Nourishing Hair Oil",
-    price: "From $18",
-    image:
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1200&auto=format&fit=crop",
-    note: "For growth, scalp care, and everyday gloss.",
+    number: "02",
+    title: "Color & Dimension",
+    description:
+      "Rich, considered color shaped around your complexion and personal style.",
+    price: "Consultation",
+    image: "/images/hair2.jpg",
   },
   {
-    name: "Lace Front Wigs",
-    price: "From $120",
-    image:
-      "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=1200&auto=format&fit=crop",
-    note: "Custom fitting, styling, and care advice.",
+    number: "03",
+    title: "Extensions & Installs",
+    description:
+      "Natural-looking length and fullness, fitted and finished with care.",
+    price: "From $140",
+    image: "/images/hair6.jpg",
+  },
+  {
+    number: "04",
+    title: "Bridal & Occasion",
+    description:
+      "Camera-ready styling that holds beautifully through every celebration.",
+    price: "From $125",
+    image: "/images/hair4.jpg",
   },
 ];
 
 const gallery = [
+  { src: "/images/hair10.jpg", alt: "Glossy black curls styled at Helen Friends", className: "md:col-span-2 md:row-span-2" },
+  { src: "/images/hair12.jpg", alt: "Smooth voluminous black hairstyle", className: "" },
+  { src: "/images/hair2.jpg", alt: "Warm dimensional copper curls", className: "" },
+  { src: "/images/hair14.jpg", alt: "Soft full curls and healthy shine", className: "" },
+  { src: "/images/hair8.jpg", alt: "Long softly curled hairstyle", className: "md:col-span-2" },
+  { src: "/images/hair3.jpg", alt: "Salon finished curls", className: "" },
+  { src: "/images/hair7.jpg", alt: "Polished special occasion hairstyle", className: "" },
+  { src: "/images/hair13.jpg", alt: "Healthy styled natural hair", className: "md:col-span-2" },
+];
+
+const heroImages = [
   {
-    title: "Color Refresh",
-    image:
-      "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop",
+    src: "/images/hair1.jpg",
+    alt: "Signature glossy curls by Helen Friends Hair Salon",
+    position: "object-[center_30%]",
   },
   {
-    title: "Bridal Makeup",
-    image:
-      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=1200&auto=format&fit=crop",
+    src: "/images/hair10.jpg",
+    alt: "Soft black curls with a polished salon finish",
+    position: "object-[center_28%]",
   },
   {
-    title: "Silk Press",
-    image:
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    title: "Nail Care",
-    image:
-      "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    title: "Spa Glow",
-    image:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    title: "Men's Grooming",
-    image:
-      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop",
+    src: "/images/hair12.jpg",
+    alt: "Full healthy hair styled at Helen Friends",
+    position: "object-top",
   },
 ];
 
-const prices = [
-  ["Haircut & Styling", "$25"],
-  ["Wash, Treatment & Blow Dry", "$35"],
-  ["Braids & Protective Styles", "$45"],
-  ["Human Hair Installation", "$70"],
-  ["Facial Glow Treatment", "$40"],
-  ["Makeup Session", "$55"],
-  ["Manicure & Pedicure", "$30"],
-  ["Full Spa Massage", "$60"],
+const productAds = [
+  {
+    name: "Silk Finish",
+    type: "Shine serum",
+    price: "$24",
+    accent: "#c2b280",
+    bottle: "rounded-t-[42%]",
+  },
+  {
+    name: "Crown Care",
+    type: "Hydration mask",
+    price: "$32",
+    accent: "#8f6b59",
+    bottle: "rounded-t-lg",
+  },
+  {
+    name: "Smooth Hold",
+    type: "Edge control",
+    price: "$18",
+    accent: "#d8cda9",
+    bottle: "rounded-full",
+  },
 ];
 
-const chatReplies = [
-  "Hi, welcome to Helen Friends. We can help with booking, services, and product advice.",
-  "For human hair, wigs, and oils, our stylist can recommend what fits your hair goal.",
-  "Appointments are available this week. Tell us the service and preferred time.",
-];
-
-export default function Home() {
-  const [activeProduct, setActiveProduct] = useState(0);
-  const [chatOpen, setChatOpen] = useState(true);
-  const [chatMessages, setChatMessages] = useState([
-    {
-      from: "salon",
-      text: "Hello, I am Helen Friends assistant. How can we make you glow today?",
-    },
-  ]);
-  const [message, setMessage] = useState("");
-
-  const nextProduct = () =>
-    setActiveProduct((current) => (current + 1) % products.length);
-
-  const previousProduct = () =>
-    setActiveProduct(
-      (current) => (current - 1 + products.length) % products.length,
-    );
-
-  const sendMessage = () => {
-    if (!message.trim()) return;
-
-    const reply =
-      chatReplies[Math.floor(Math.random() * chatReplies.length)];
-
-    setChatMessages((current) => [
-      ...current,
-      { from: "guest", text: message.trim() },
-      { from: "salon", text: reply },
-    ]);
-    setMessage("");
-  };
+function ProductAdRail() {
+  const repeatingProducts = [...productAds, ...productAds];
 
   return (
-    <main className="bg-black text-white overflow-hidden">
-      {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center pb-20">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?q=80&w=2070&auto=format&fit=crop"
-            alt="Helen Friends beauty salon"
-            fill
-            className="object-cover opacity-40"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/35" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl px-6 lg:px-12 text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="uppercase tracking-[6px] text-yellow-400 mb-4 text-sm"
-          >
-            Helen Friends Beauty Salon
-          </motion.p>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold leading-tight max-w-4xl mx-auto"
-          >
-            Beauty, Style & Confidence
-            <span className="block text-yellow-400">For Men & Women</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-6 text-lg md:text-xl text-zinc-300 max-w-2xl mx-auto leading-8"
-          >
-            Experience premium beauty care, modern styling, skincare, hair
-            treatment, makeup, grooming, and wellness services designed for
-            everyone.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5"
-          >
-            <button className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold flex items-center gap-2 transition-all duration-300">
-              Book Appointment
-              <ArrowRight size={20} />
-            </button>
-
-            <button className="border border-white/30 hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300">
-              Explore Services
-            </button>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-24 grid lg:grid-cols-[320px_1fr] gap-10 items-start">
-          <aside className="lg:sticky lg:top-8">
-            <div className="border border-yellow-500/40 bg-zinc-900 rounded-[28px] overflow-hidden shadow-2xl shadow-yellow-500/10">
-              <div className="relative h-64">
-                <Image
-                  src={products[activeProduct].image}
-                  alt={products[activeProduct].name}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
-                <div className="absolute left-5 right-5 bottom-5">
-                  <p className="text-xs uppercase tracking-[4px] text-yellow-300">
-                    Product Offer
+    <div className="absolute bottom-[6%] right-0 top-[6%] z-20 hidden w-[29%] overflow-hidden sm:block">
+      <div
+        className="h-full overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+        }}
+      >
+        <motion.div
+          animate={{ y: ["0%", "-50%"] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="grid gap-3 py-5"
+        >
+          {repeatingProducts.map((product, index) => (
+            <motion.article
+              key={`${product.name}-${index}`}
+              whileHover={{ rotateY: -8, x: -8, scale: 1.03 }}
+              className="relative h-40 overflow-hidden border border-white/25 bg-[#2b1d17] p-3 text-white shadow-[0_18px_45px_rgba(43,29,23,0.34)]"
+              style={{
+                transformPerspective: 800,
+                rotateY: index % 2 ? -5 : 5,
+              }}
+            >
+              <div
+                className="absolute inset-0 opacity-20"
+                style={{
+                  background: `linear-gradient(135deg, ${product.accent}, transparent 62%)`,
+                }}
+              />
+              <div className="relative flex h-full items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[0.5rem] font-bold uppercase tracking-[0.16em] text-[#c2b280]">
+                    Salon pick
                   </p>
-                  <h2 className="mt-2 text-2xl font-bold">
-                    {products[activeProduct].name}
-                  </h2>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-yellow-400 text-2xl font-bold">
-                    {products[activeProduct].price}
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={previousProduct}
-                      className="h-10 w-10 rounded-full bg-white/10 hover:bg-yellow-500 hover:text-black grid place-items-center transition"
-                      aria-label="Previous product"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button
-                      onClick={nextProduct}
-                      className="h-10 w-10 rounded-full bg-white/10 hover:bg-yellow-500 hover:text-black grid place-items-center transition"
-                      aria-label="Next product"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                </div>
-                <p className="mt-4 text-zinc-300 leading-7">
-                  {products[activeProduct].note}
-                </p>
-                <button className="mt-6 w-full bg-yellow-500 hover:bg-yellow-400 text-black rounded-full py-3 font-semibold transition">
-                  Ask About Product
-                </button>
-                <div className="mt-5 flex gap-2">
-                  {products.map((product, index) => (
-                    <button
-                      key={product.name}
-                      onClick={() => setActiveProduct(index)}
-                      aria-label={`Show ${product.name}`}
-                      className={`h-2 flex-1 rounded-full transition ${
-                        index === activeProduct ? "bg-yellow-400" : "bg-white/20"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          <div className="space-y-24">
-            {/* SERVICES SECTION */}
-            <section>
-              <div className="text-center mb-16">
-                <p className="text-yellow-400 uppercase tracking-[5px] text-sm mb-3">
-                  Our Services
-                </p>
-
-                <h2 className="text-4xl md:text-5xl font-bold">
-                  Premium Salon Experience
-                </h2>
-
-                <p className="mt-5 text-zinc-400 max-w-2xl mx-auto text-lg">
-                  We provide world-class beauty and grooming services for both
-                  men and women using modern techniques and premium products.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all duration-300 group"
-                >
-                  <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-6">
-                    <Scissors className="text-yellow-400" size={32} />
-                  </div>
-
-                  <h3 className="text-2xl font-semibold mb-4">Hair Styling</h3>
-
-                  <p className="text-zinc-400 leading-7">
-                    Professional haircut, coloring, treatment, and styling
-                    services tailored for men and women.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all duration-300 group"
-                >
-                  <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-6">
-                    <Sparkles className="text-yellow-400" size={32} />
-                  </div>
-
-                  <h3 className="text-2xl font-semibold mb-4">
-                    Skin & Makeup
+                  <h3 className="display-font mt-2 text-xl leading-none">
+                    {product.name}
                   </h3>
-
-                  <p className="text-zinc-400 leading-7">
-                    Facial treatment, skincare therapy, bridal makeup, and
-                    luxury beauty enhancement services.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all duration-300 group"
-                >
-                  <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-6">
-                    <HeartHandshake className="text-yellow-400" size={32} />
-                  </div>
-
-                  <h3 className="text-2xl font-semibold mb-4">
-                    Wellness & Spa
-                  </h3>
-
-                  <p className="text-zinc-400 leading-7">
-                    Relaxing massage, spa therapy, grooming, and wellness
-                    services for total rejuvenation.
-                  </p>
-                </motion.div>
-              </div>
-            </section>
-
-            <section>
-              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
-                <div>
-                  <p className="text-yellow-400 uppercase tracking-[5px] text-sm mb-3">
-                    Gallery
-                  </p>
-                  <h2 className="text-4xl md:text-5xl font-bold">
-                    Recent Beauty Moments
-                  </h2>
+                  <p className="mt-2 text-[0.62rem] text-white/55">{product.type}</p>
+                  <p className="mt-3 text-xs font-bold">{product.price}</p>
                 </div>
-                <p className="text-zinc-400 max-w-md leading-7">
-                  A look at signature hair, makeup, spa, nails, and grooming
-                  work from Helen Friends.
-                </p>
-              </div>
-
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                {gallery.map((item, index) => (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ delay: index * 0.04 }}
-                    className="relative h-72 rounded-3xl overflow-hidden group"
+                <div className="relative h-[108px] w-[46px] shrink-0">
+                  <div className="absolute left-1/2 top-0 h-4 w-5 -translate-x-1/2 bg-[#d9ceb0]" />
+                  <div
+                    className={`absolute inset-x-0 bottom-0 top-3 border border-white/30 ${product.bottle}`}
+                    style={{
+                      background: `linear-gradient(145deg, ${product.accent}, #5c4033)`,
+                    }}
                   >
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                    <div className="absolute left-5 right-5 bottom-5 flex items-center justify-between">
-                      <h3 className="text-xl font-semibold">{item.title}</h3>
-                      <Star className="text-yellow-400 fill-yellow-400" size={18} />
+                    <div className="absolute left-1/2 top-[44%] w-[82%] -translate-x-1/2 bg-[#fbf8f1] px-1 py-2 text-center text-[0.42rem] font-black uppercase tracking-[0.08em] text-[#5c4033]">
+                      H.F.
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <div className="bg-black border border-zinc-800 rounded-[32px] p-6 md:p-10">
-                <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start">
-                  <div>
-                    <p className="text-yellow-400 uppercase tracking-[5px] text-sm mb-3">
-                      Price List
-                    </p>
-                    <h2 className="text-4xl md:text-5xl font-bold">
-                      Clear Beauty Pricing
-                    </h2>
-                    <p className="mt-5 text-zinc-400 leading-7">
-                      Choose a single service or combine treatments for a full
-                      refresh. Final price can vary by hair length and style
-                      detail.
-                    </p>
-                    <div className="mt-8 flex flex-wrap gap-3 text-sm text-zinc-300">
-                      <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2">
-                        <Clock size={16} className="text-yellow-400" />
-                        Same day slots
-                      </span>
-                      <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2">
-                        <CalendarCheck size={16} className="text-yellow-400" />
-                        Walk-ins welcome
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {prices.map(([service, price]) => (
-                      <div
-                        key={service}
-                        className="rounded-2xl bg-zinc-900 border border-zinc-800 p-5 hover:border-yellow-500/70 transition"
-                      >
-                        <p className="text-zinc-300">{service}</p>
-                        <p className="mt-3 text-2xl font-bold text-yellow-400">
-                          {price}
-                        </p>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
-        </div>
-      </section>
+            </motion.article>
+          ))}
+        </motion.div>
+      </div>
+      <div className="pointer-events-none absolute right-2 top-1/2 z-30 -translate-y-1/2 [writing-mode:vertical-rl]">
+        <p className="text-[0.48rem] font-black uppercase tracking-[0.22em] text-white/45">
+          Beauty essentials
+        </p>
+      </div>
+    </div>
+  );
+}
 
-      {/* ABOUT SECTION */}
-      <section className="py-24 bg-black">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-14 items-center">
-          <div className="relative h-[500px] rounded-3xl overflow-hidden">
-            <Image
-              src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=1974&auto=format&fit=crop"
-              alt="Salon interior"
-              fill
-              className="object-cover"
-            />
-          </div>
+function HeroPhoto() {
+  const [activeImage, setActiveImage] = useState(0);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
+    stiffness: 110,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), {
+    stiffness: 110,
+    damping: 20,
+  });
 
-          <div>
-            <p className="uppercase tracking-[5px] text-yellow-400 mb-4 text-sm">
-              About Us
-            </p>
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveImage((current) => (current + 1) % heroImages.length);
+    }, 4200);
+    return () => window.clearInterval(timer);
+  }, []);
 
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-              Modern Luxury Beauty Salon Experience
-            </h2>
-
-            <p className="mt-6 text-zinc-400 leading-8 text-lg">
-              We combine creativity, elegance, and modern beauty techniques to
-              deliver a premium salon experience for every client. Our expert
-              stylists and beauty specialists are dedicated to helping you look
-              and feel your best.
-            </p>
-
-            <div className="mt-10 flex gap-10">
-              <div>
-                <h3 className="text-4xl font-bold text-yellow-400">10+</h3>
-                <p className="text-zinc-400 mt-2">Years Experience</p>
-              </div>
-
-              <div>
-                <h3 className="text-4xl font-bold text-yellow-400">5K+</h3>
-                <p className="text-zinc-400 mt-2">Happy Clients</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA SECTION */}
-      <section className="py-24 bg-yellow-500 text-black">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-            Ready For Your New Look?
-          </h2>
-
-          <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto leading-8">
-            Book your appointment today and enjoy a luxury salon experience
-            designed for confidence, beauty, and style.
-          </p>
-
-          <button className="mt-10 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-zinc-900 transition-all duration-300">
-            Schedule Appointment
-          </button>
-        </div>
-      </section>
-
-      <footer className="bg-zinc-950 border-t border-zinc-800">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14 grid md:grid-cols-4 gap-10">
-          <div className="md:col-span-2">
-            <h2 className="text-3xl font-bold">
-              Helen <span className="text-yellow-400">Friends</span>
-            </h2>
-            <p className="mt-4 text-zinc-400 leading-7 max-w-md">
-              A professional beauty salon for hair, makeup, skincare, spa,
-              grooming, and premium beauty products.
-            </p>
-            <div className="mt-6 flex gap-3">
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="h-11 w-11 rounded-full bg-white/10 hover:bg-yellow-500 hover:text-black grid place-items-center transition"
-              >
-                <FaInstagram size={19} />
-              </a>
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="h-11 w-11 rounded-full bg-white/10 hover:bg-yellow-500 hover:text-black grid place-items-center transition"
-              >
-                <FaFacebookF size={18} />
-              </a>
-              <a
-                href="mailto:hello@helenfriends.com"
-                aria-label="Email Helen Friends"
-                className="h-11 w-11 rounded-full bg-white/10 hover:bg-yellow-500 hover:text-black grid place-items-center transition"
-              >
-                <Mail size={19} />
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-5">Visit Us</h3>
-            <div className="space-y-4 text-zinc-400">
-              <p className="flex gap-3">
-                <MapPin className="text-yellow-400 shrink-0" size={20} />
-                Beauty Avenue, City Center
-              </p>
-              <p className="flex gap-3">
-                <Phone className="text-yellow-400 shrink-0" size={20} />
-                +1 555 014 827
-              </p>
-              <p className="flex gap-3">
-                <Clock className="text-yellow-400 shrink-0" size={20} />
-                Mon - Sat, 9:00 AM - 8:00 PM
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-5">Quick Links</h3>
-            <div className="grid gap-3 text-zinc-400">
-              <a href="#" className="hover:text-yellow-400 transition">
-                Services
-              </a>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Gallery
-              </a>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Price List
-              </a>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Products
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-zinc-800 py-5 text-center text-sm text-zinc-500">
-          Copyright 2026 Helen Friends. All rights reserved.
-        </div>
-      </footer>
-
-      <div className="fixed bottom-5 right-5 z-50">
-        {chatOpen ? (
+  return (
+    <motion.div
+      className="photo-depth relative h-full min-h-[440px] w-full overflow-visible"
+      onMouseMove={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        x.set((event.clientX - rect.left) / rect.width - 0.5);
+        y.set((event.clientY - rect.top) / rect.height - 0.5);
+      }}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+    >
+      <motion.div
+        style={{ rotateX, rotateY, transformPerspective: 1100 }}
+        initial={{ opacity: 0, y: 28, rotateZ: 2 }}
+        animate={{ opacity: 1, y: 0, rotateZ: 0 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute bottom-0 left-[4%] right-0 top-0 overflow-hidden shadow-[0_35px_80px_rgba(43,29,23,0.28)] sm:right-[21%]"
+      >
+        <AnimatePresence mode="popLayout">
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="w-[calc(100vw-40px)] max-w-sm overflow-hidden rounded-3xl border border-yellow-500/40 bg-zinc-950 shadow-2xl shadow-black/60"
+            key={heroImages[activeImage].src}
+            initial={{ opacity: 0, x: 90, scale: 1.08, rotateY: -7 }}
+            animate={{ opacity: 1, x: 0, scale: 1, rotateY: 0 }}
+            exit={{ opacity: 0, x: -75, scale: 0.96, rotateY: 6 }}
+            transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0"
           >
-            <div className="flex items-center justify-between gap-4 bg-yellow-500 p-4 text-black">
+            <Image
+              src={heroImages[activeImage].src}
+              alt={heroImages[activeImage].alt}
+              fill
+              priority={activeImage === 0}
+              sizes="(max-width: 1024px) 92vw, 43vw"
+              className={`object-cover ${heroImages[activeImage].position}`}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2b1d17]/25 via-transparent to-transparent" />
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute bottom-4 left-4 z-20 flex gap-1.5">
+          {heroImages.map((image, index) => (
+            <button
+              key={image.src}
+              type="button"
+              onClick={() => setActiveImage(index)}
+              aria-label={`Show hero image ${index + 1}`}
+              className={`h-1.5 transition-all ${
+                activeImage === index ? "w-8 bg-white" : "w-3 bg-white/45"
+              }`}
+            />
+          ))}
+        </div>
+      </motion.div>
+      <motion.div
+        animate={{ y: [0, -14, 0], rotate: [-3, 1, -3], z: [30, 70, 30] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[5%] left-0 z-20 h-[34%] w-[27%] overflow-hidden border-4 border-[#fbf8f1] shadow-2xl"
+      >
+        <Image
+          src="/images/hair1.jpg"
+          alt="Close view of signature glossy curls"
+          fill
+          sizes="220px"
+          className="object-cover object-[center_28%]"
+        />
+      </motion.div>
+      <motion.div
+        animate={{ y: [0, 11, 0], rotate: [4, 0, 4], z: [20, 55, 20] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute right-[20%] top-[8%] z-10 hidden h-[26%] w-[24%] overflow-hidden border-4 border-[#fbf8f1] shadow-2xl sm:block"
+      >
+        <Image
+          src="/images/hair2.jpg"
+          alt="Dimensional hair color"
+          fill
+          sizes="190px"
+          className="object-cover object-top"
+        />
+      </motion.div>
+      <ProductAdRail />
+    </motion.div>
+  );
+}
+
+const chatbotReplies = [
+  "We would love to help. You can reserve a preferred date on our booking page.",
+  "For color or extensions, we recommend starting with a consultation.",
+  "We are located at 1074 South Ironton St in Aurora. You can also call us at (720)-315-5051.",
+];
+
+function SalonChatbot() {
+  const [open, setOpen] = useState(true);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([
+    {
+      from: "salon",
+      text: "Hi, welcome to Helen Friends. How can we help with your hair today?",
+    },
+  ]);
+
+  function sendMessage() {
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage) return;
+
+    const normalized = trimmedMessage.toLowerCase();
+    const replyIndex = normalized.includes("where") || normalized.includes("location")
+      ? 2
+      : normalized.includes("color") || normalized.includes("extension")
+        ? 1
+        : 0;
+
+    setMessages((current) => [
+      ...current,
+      { from: "guest", text: trimmedMessage },
+      { from: "salon", text: chatbotReplies[replyIndex] },
+    ]);
+    setMessage("");
+  }
+
+  return (
+    <div className="fixed bottom-4 right-4 z-[80] sm:bottom-6 sm:right-6">
+      <AnimatePresence mode="wait">
+        {open ? (
+          <motion.section
+            key="chat-panel"
+            initial={{ opacity: 0, y: 25, scale: 0.94, rotateX: -8 }}
+            animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+            exit={{ opacity: 0, y: 18, scale: 0.94 }}
+            className="w-[calc(100vw-32px)] max-w-[350px] overflow-hidden border border-[#c2b280]/45 bg-[#fbf8f1] shadow-[0_28px_80px_rgba(43,29,23,0.34)]"
+            style={{ transformPerspective: 900 }}
+          >
+            <header className="flex items-center justify-between bg-[#5c4033] px-4 py-3 text-white">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-black text-yellow-400 grid place-items-center">
-                  <MessageCircle size={20} />
+                <div className="grid h-9 w-9 place-items-center bg-[#c2b280] text-[#2b1d17]">
+                  <MessageCircle size={18} />
                 </div>
                 <div>
-                  <p className="font-bold">Salon Chat</p>
-                  <p className="text-xs text-black/70">Usually replies now</p>
+                  <p className="text-sm font-bold">Salon assistant</p>
+                  <p className="mt-0.5 text-[0.62rem] text-white/60">Here to help</p>
                 </div>
               </div>
               <button
-                onClick={() => setChatOpen(false)}
-                className="h-9 w-9 rounded-full bg-black/10 hover:bg-black hover:text-white grid place-items-center transition"
-                aria-label="Close chat"
+                type="button"
+                onClick={() => setOpen(false)}
+                className="grid h-9 w-9 place-items-center border border-white/15 transition hover:border-white/50"
+                aria-label="Close salon chatbot"
+                title="Close chat"
               >
-                <X size={18} />
+                <X size={17} />
               </button>
-            </div>
-
-            <div className="max-h-72 overflow-y-auto p-4 space-y-3">
-              {chatMessages.map((chat, index) => (
+            </header>
+            <div className="max-h-60 space-y-3 overflow-y-auto p-4">
+              {messages.map((chat, index) => (
                 <div
                   key={`${chat.from}-${index}`}
-                  className={`flex ${
-                    chat.from === "guest" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex ${chat.from === "guest" ? "justify-end" : "justify-start"}`}
                 >
                   <p
-                    className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-6 ${
+                    className={`max-w-[84%] px-3 py-2.5 text-xs leading-5 ${
                       chat.from === "guest"
-                        ? "bg-yellow-500 text-black"
-                        : "bg-zinc-900 text-zinc-200"
+                        ? "bg-[#5c4033] text-white"
+                        : "bg-[#eee6d8] text-[#4d3e36]"
                     }`}
                   >
                     {chat.text}
@@ -603,36 +376,253 @@ export default function Home() {
                 </div>
               ))}
             </div>
-
-            <div className="border-t border-zinc-800 p-3 flex gap-2">
+            <div className="flex gap-2 border-t border-[#5c4033]/15 p-3">
               <input
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") sendMessage();
                 }}
-                placeholder="Type your message..."
-                className="min-w-0 flex-1 rounded-full bg-zinc-900 px-4 py-3 text-sm outline-none ring-1 ring-transparent focus:ring-yellow-500"
+                placeholder="Ask about services..."
+                aria-label="Chat message"
+                className="field min-h-11 flex-1 py-2 text-xs"
               />
               <button
+                type="button"
                 onClick={sendMessage}
-                className="h-11 w-11 rounded-full bg-yellow-500 text-black grid place-items-center hover:bg-yellow-400 transition"
+                className="grid h-11 w-11 shrink-0 place-items-center bg-[#5c4033] text-white transition hover:bg-[#3f2b22]"
                 aria-label="Send chat message"
               >
-                <Send size={18} />
+                <Send size={16} />
               </button>
             </div>
-          </motion.div>
+          </motion.section>
         ) : (
-          <button
-            onClick={() => setChatOpen(true)}
-            className="h-14 w-14 rounded-full bg-yellow-500 text-black shadow-xl shadow-black/50 grid place-items-center hover:bg-yellow-400 transition"
-            aria-label="Open chat"
+          <motion.button
+            key="chat-button"
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ y: -4, rotate: -3 }}
+            type="button"
+            onClick={() => setOpen(true)}
+            className="grid h-14 w-14 place-items-center bg-[#5c4033] text-white shadow-[0_16px_45px_rgba(43,29,23,0.35)]"
+            aria-label="Open salon chatbot"
+            title="Chat with us"
           >
-            <MessageCircle size={24} />
-          </button>
+            <MessageCircle size={23} />
+          </motion.button>
         )}
-      </div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <main className="overflow-hidden bg-[#fbf8f1]">
+      <SiteHeader />
+
+      <section className="noise relative min-h-[calc(100svh-80px)] border-b border-[#5c4033]/15">
+        <div className="mx-auto grid min-h-[calc(100svh-80px)] max-w-[1440px] items-center gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:px-12 lg:py-16">
+          <motion.div
+            initial={{ opacity: 0, x: -26 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.75 }}
+            className="relative z-10 max-w-2xl"
+          >
+            <p className="eyebrow">Aurora, Colorado · Hair artistry</p>
+            <h1 className="display-font mt-5 text-[clamp(3.4rem,7vw,7rem)] font-normal leading-[0.88] text-[#2b1d17]">
+              Helen Friends
+              <span className="mt-2 block italic text-[#5c4033]">Hair Salon</span>
+            </h1>
+            <p className="mt-7 max-w-xl text-base leading-7 text-[#63564e] sm:text-lg sm:leading-8">
+              Elevated styling, healthy hair care and a finish that still feels
+              like you. Every appointment is shaped around your hair, your
+              occasion and your confidence.
+            </p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/book"
+                className="inline-flex h-13 items-center justify-center gap-3 bg-[#5c4033] px-6 text-sm font-bold text-white transition hover:bg-[#3f2b22]"
+              >
+                Book your appointment <ArrowRight size={17} />
+              </Link>
+              <a
+                href="#gallery"
+                className="inline-flex h-13 items-center justify-center border border-[#5c4033]/25 px-6 text-sm font-bold text-[#5c4033] transition hover:border-[#5c4033]"
+              >
+                Explore our work
+              </a>
+            </div>
+            <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-[#5c4033]/15 pt-6 text-sm text-[#63564e]">
+              <span className="flex items-center gap-2"><Check size={16} className="text-[#5c4033]" /> Personalized care</span>
+              <span className="flex items-center gap-2"><Check size={16} className="text-[#5c4033]" /> Premium finish</span>
+            </div>
+          </motion.div>
+          <div className="h-[54vh] min-h-[440px] lg:h-[calc(100svh-150px)] lg:max-h-[760px]">
+            <HeroPhoto />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#5c4033] text-white">
+        <div className="mx-auto grid max-w-[1440px] divide-y divide-white/15 px-5 sm:px-8 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-12">
+          <a href="tel:+17203155051" className="flex items-center gap-4 py-6 md:px-7 md:first:pl-0">
+            <Phone size={20} className="text-[#c2b280]" />
+            <div><p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/55">Call us</p><p className="mt-1 text-sm font-semibold">(720)-315-5051</p></div>
+          </a>
+          <a href="https://maps.google.com/?q=1074+South+Ironton+St+Aurora+CO+80012" target="_blank" rel="noreferrer" className="flex items-center gap-4 py-6 md:px-7">
+            <MapPin size={20} className="text-[#c2b280]" />
+            <div><p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/55">Visit us</p><p className="mt-1 text-sm font-semibold">1074 South Ironton St, Aurora</p></div>
+          </a>
+          <Link href="/book" className="flex items-center gap-4 py-6 md:px-7 md:last:pr-0">
+            <CalendarDays size={20} className="text-[#c2b280]" />
+            <div><p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/55">Appointments</p><p className="mt-1 text-sm font-semibold">Reserve your time online</p></div>
+          </Link>
+        </div>
+      </section>
+
+      <section id="services" className="py-24 sm:py-32">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="grid items-end gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="eyebrow">Signature services</p>
+              <h2 className="display-font mt-4 max-w-xl text-5xl leading-[0.98] text-[#2b1d17] sm:text-6xl">
+                Beautiful hair, thoughtfully done.
+              </h2>
+            </div>
+            <p className="max-w-xl text-base leading-8 text-[#6d6058] lg:justify-self-end">
+              We pair technical skill with attentive consultation, protecting
+              your hair health while creating the shape, color and finish you want.
+            </p>
+          </div>
+
+          <div className="mt-14 border-t border-[#5c4033]/20">
+            {services.map((service, index) => (
+              <motion.article
+                key={service.title}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ delay: index * 0.06 }}
+                className="group grid items-center gap-6 border-b border-[#5c4033]/20 py-7 md:grid-cols-[70px_1fr_1.4fr_120px]"
+              >
+                <span className="display-font text-2xl italic text-[#c2b280]">{service.number}</span>
+                <div className="relative hidden aspect-[4/3] max-w-[170px] overflow-hidden md:block">
+                  <Image src={service.image} alt="" fill sizes="170px" className="object-cover object-top transition duration-500 group-hover:scale-105" />
+                </div>
+                <div>
+                  <h3 className="display-font text-3xl text-[#2b1d17]">{service.title}</h3>
+                  <p className="mt-2 max-w-xl text-sm leading-6 text-[#73665e]">{service.description}</p>
+                </div>
+                <p className="text-sm font-bold text-[#5c4033] md:text-right">{service.price}</p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" className="bg-[#2b1d17] py-24 text-white sm:py-32">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#c2b280]">The Helen Friends finish</p>
+              <h2 className="display-font mt-4 text-5xl leading-none sm:text-6xl">Made to be seen.</h2>
+            </div>
+            <p className="max-w-md text-sm leading-7 text-white/62">
+              Real clients, signature movement and shine. A closer look at work
+              created in our salon.
+            </p>
+          </div>
+
+          <div className="mt-12 grid auto-rows-[260px] grid-cols-1 gap-3 sm:grid-cols-2 md:auto-rows-[310px] md:grid-cols-4">
+            {gallery.map((image, index) => (
+              <motion.figure
+                key={image.src}
+                initial={{ opacity: 0, rotateY: index % 2 ? 8 : -8, y: 25 }}
+                whileInView={{ opacity: 1, rotateY: 0, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.65, delay: (index % 4) * 0.07 }}
+                whileHover={{ scale: 0.985, rotateY: index % 2 ? -2 : 2 }}
+                className={`photo-depth relative overflow-hidden bg-[#3b2a22] ${image.className}`}
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-top transition duration-700 hover:scale-105"
+                />
+              </motion.figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="py-24 sm:py-32">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-14 px-5 sm:px-8 lg:grid-cols-2 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="relative min-h-[520px]"
+          >
+            <div className="absolute bottom-0 left-0 top-0 w-[78%] overflow-hidden">
+              <Image src="/images/hair6.jpg" alt="A happy Helen Friends Hair Salon client" fill sizes="(max-width: 1024px) 78vw, 38vw" className="object-cover object-top" />
+            </div>
+            <div className="absolute bottom-[8%] right-0 h-[46%] w-[42%] overflow-hidden border-[6px] border-[#fbf8f1] shadow-2xl">
+              <Image src="/images/hair9.jpg" alt="Detailed salon hair finish" fill sizes="260px" className="object-cover object-top" />
+            </div>
+          </motion.div>
+          <div className="lg:pl-8">
+            <p className="eyebrow">Care in every detail</p>
+            <h2 className="display-font mt-4 text-5xl leading-[1.02] text-[#2b1d17] sm:text-6xl">
+              Your hair deserves expertise and ease.
+            </h2>
+            <p className="mt-7 text-base leading-8 text-[#6d6058]">
+              At Helen Friends Hair Salon, the experience starts by listening.
+              We take time to understand your routine, your hair goals and how
+              you want to feel when you leave.
+            </p>
+            <p className="mt-4 text-base leading-8 text-[#6d6058]">
+              From healthy-hair maintenance to a complete transformation, every
+              service is delivered with precision, warmth and lasting polish.
+            </p>
+            <div className="mt-9 grid grid-cols-2 border-y border-[#5c4033]/20 py-6">
+              <div className="border-r border-[#5c4033]/20">
+                <p className="display-font text-4xl text-[#5c4033]">14+</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[#75685f]">Signature looks</p>
+              </div>
+              <div className="pl-7">
+                <p className="display-font text-4xl text-[#5c4033]">1:1</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[#75685f]">Personal care</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#c2b280]">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-10 px-5 py-16 sm:px-8 md:grid-cols-[1fr_auto] lg:px-12">
+          <div>
+            <div className="flex gap-1 text-[#5c4033]" aria-label="Five star experience">
+              {[0, 1, 2, 3, 4].map((star) => <Star key={star} size={16} fill="currentColor" />)}
+            </div>
+            <h2 className="display-font mt-4 text-4xl leading-tight text-[#2b1d17] sm:text-5xl">
+              Ready for hair that moves with you?
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#4f4038]">
+              Choose your service and preferred time. We’ll take care of the rest.
+            </p>
+          </div>
+          <Link href="/book" className="inline-flex h-13 items-center justify-center gap-3 bg-[#2b1d17] px-7 text-sm font-bold text-white transition hover:bg-[#5c4033]">
+            Book appointment <Sparkles size={17} />
+          </Link>
+        </div>
+      </section>
+
+      <SiteFooter />
+      <SalonChatbot />
     </main>
   );
 }
